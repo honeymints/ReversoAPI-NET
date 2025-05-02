@@ -10,9 +10,9 @@
             var source = Language.English;
             var target = Language.Russian;
 
-            await PrintTranslationsAsync(text, source, target);
+           // await PrintTranslationsAsync(text, source, target);
 
-            await PrintContextsAsync(text, source, target);
+           // await PrintContextsAsync(text, source, target);
 
             await PrintSynonimsAsync(text, source);
 

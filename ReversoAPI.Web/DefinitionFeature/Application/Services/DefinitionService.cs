@@ -8,7 +8,8 @@ namespace ReversoAPI.Web.DefinitionFeature.Application.Services
 
     public class DefinitionService : IDefinitionService
     {
-        private const string ContextURL = "https://dictionary.reverso.net/english-definition";
+        private const string DefitinitionURL = "https://dictionary.reverso.net/";
+
         private readonly IAPIConnector _apiConnector;
         private readonly IParseService<DefinitionData> _parser;
 
@@ -36,7 +37,7 @@ namespace ReversoAPI.Web.DefinitionFeature.Application.Services
             var sourceLanguage = source.ToString().ToLower();
             var targetLanguage = target.ToString().ToLower();
 
-            return new Uri(ContextURL + $"{sourceLanguage}-{targetLanguage}/{text}");
+            return new Uri(DefitinitionURL + $"{sourceLanguage}-definition/{text}#translation={targetLanguage}");
         }
     }
 }
