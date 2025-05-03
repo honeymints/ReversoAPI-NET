@@ -15,15 +15,17 @@ namespace ReversoAPI.Web.DefinitionFeature.Application
         {
             _definitionService = definitionService;
         }
-        public async Task<DefinitionData> GetAsync(string text, Language source, Language target, CancellationToken cancellationToken)
+        public async Task<DefinitionData> GetAsync(string text, Language language, CancellationToken cancellationToken)
         {
-            var validationResult = new DefinitionRequestValidator(text, source, target).Validate();
+            var validationResult = new DefinitionRequestValidator(text, language).Validate();
 
             if (!validationResult.IsValid)
             {
                 throw validationResult.Exception;
             }
-           return await _definitionService.GetAsync(text, source, target, cancellationToken).ConfigureAwait(false);
+           var output = await _definitionService.GetAsync(text, language, cancellationToken).ConfigureAwait(false);
+
+            return output;
 
         }
     }

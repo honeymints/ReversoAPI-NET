@@ -10,9 +10,11 @@
             var source = Language.English;
             var target = Language.Russian;
 
-           // await PrintTranslationsAsync(text, source, target);
+            // await PrintTranslationsAsync(text, source, target);
 
-           // await PrintContextsAsync(text, source, target);
+            // await PrintContextsAsync(text, source, target);
+
+            //await PrintDefinitionAsync(text, source);
 
             await PrintSynonimsAsync(text, source);
 
@@ -23,6 +25,11 @@
             await DownloadPronunciationAsync(text, source, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{source}.mp3"));
 
             _reversoClient.Dispose();
+        }
+
+        private static async Task PrintDefinitionAsync(string text,Language language)
+        {
+            var definitionDate = await _reversoClient.Definition.GetAsync(text, language);
         }
 
         private static async Task PrintSpellingsAsync(string text, Language language)

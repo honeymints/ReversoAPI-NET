@@ -1,6 +1,8 @@
 ﻿using System;
 using ReversoAPI.Web.Shared.Infrastructure.Http;
 using ReversoAPI.Web;
+using ReversoAPI.Web.DefinitionFeature.Domain.Core.Entities;
+using ReversoAPI.Web.DefinitionFeature.Domain.Services;
 
 namespace ReversoAPI
 {
@@ -36,10 +38,19 @@ namespace ReversoAPI
         }
 
         private IParseService<ConjugationData> _conjugationParser;
+
         public IParseService<ConjugationData> ConjugationParser
         {
             get => _conjugationParser ?? new ConjugationParseService(Logger);
             private set => _conjugationParser = value;
+        }
+
+        private IParseService<DefinitionData> _definitonParser;
+
+        public IParseService<DefinitionData> DefinitionParser
+        {
+            get => _definitonParser ?? new DefinitionParseService(Logger);
+            private set => _definitonParser = value;
         }
 
         // Extra
@@ -53,6 +64,7 @@ namespace ReversoAPI
             IParseService<ContextData> contextParser, 
             IParseService<SynonymsData> synonymsParser,
             IParseService<ConjugationData> conjugationParser,
+            IParseService<DefinitionData> definitionParser,
             ILogger logger)
         {
             HttpClient = httpClient;
@@ -60,6 +72,7 @@ namespace ReversoAPI
             ContextParser = contextParser;
             SynonymsParser = synonymsParser;
             ConjugationParser = conjugationParser;
+            DefinitionParser = definitionParser;
             Logger = logger;
         }
 
@@ -73,6 +86,7 @@ namespace ReversoAPI
                 new ContextParseService(null),
                 new SynonymsParseService(null),
                 new ConjugationParseService(null),
+                new DefinitionParseService(null),
                 null);
         }
 
@@ -113,6 +127,15 @@ namespace ReversoAPI
             if (conjugationParser is null) throw new ArgumentNullException(nameof(conjugationParser));
 
             ConjugationParser = conjugationParser;
+            return this;
+        }
+
+        public ReversoClientConfig WithDefinitionParseService(IParseService<DefinitionData> definitionParser)
+        {
+            if (definitionParser is null) throw new ArgumentNullException(nameof(definitionParser));
+
+            DefinitionParser = definitionParser;
+
             return this;
         }
 

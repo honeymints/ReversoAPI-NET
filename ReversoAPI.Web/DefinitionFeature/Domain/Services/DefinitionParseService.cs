@@ -18,7 +18,7 @@ namespace ReversoAPI.Web.DefinitionFeature.Domain.Services
             {
                 return new DefinitionParseBuilder(htmlStream)
                     .WithInputText()
-                    .WithExamples()
+                    .WithDefinitions()
                     .Build();
             }
             catch (ParsingException ex)

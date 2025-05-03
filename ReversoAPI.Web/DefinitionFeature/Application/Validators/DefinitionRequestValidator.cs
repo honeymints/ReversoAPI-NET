@@ -19,22 +19,19 @@ namespace ReversoAPI.Web.DefinitionFeature.Application.Validators
 
 
         public string Text { get; }
-        public Language Source { get; }
-        public Language Target { get; }
+        public Language Language { get; }
 
-        public DefinitionRequestValidator(string text, Language source, Language target)
+        public DefinitionRequestValidator(string text, Language language)
         {
             Text = text;
-            Source = source;
-            Target = target;
+            Language = language;
         }
         protected override IEnumerable<Func<IValidationResult>> GetValidators()
         {
             Func<IValidationResult>[] validators = {
                 () => ValidateText(Text),
-                () => ValidateLanguage(Source),
-                () => ValidateLanguage(Target),
-                () => ValidateLanguageCompatibility(Source, Target),
+                () => ValidateLanguage(Language),
+                //() => ValidateLanguageCompatibility(Language, Target),
              };
             return validators;
         }

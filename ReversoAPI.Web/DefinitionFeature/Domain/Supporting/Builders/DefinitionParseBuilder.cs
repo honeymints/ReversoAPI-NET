@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using HtmlAgilityPack;
 using ReversoAPI.Web.DefinitionFeature.Domain.Core.Entities;
+using ReversoAPI.Web.DefinitionFeature.Domain.ValueObjects;
 using ReversoAPI.Web.Shared.Domain.Extensions;
 
 namespace ReversoAPI.Web.DefinitionFeature.Domain.Supporting.Builders
@@ -27,7 +28,7 @@ namespace ReversoAPI.Web.DefinitionFeature.Domain.Supporting.Builders
             try
             {
                 _response.Text = _html.DocumentNode
-                    .SelectSingleNode("//*[@id='search-input']//input[1]")
+                    .SelectSingleNode("//*[@id='search-definitions-input']")
                     .GetAttributeValue("value", string.Empty);
 
                 return this;
@@ -42,68 +43,59 @@ namespace ReversoAPI.Web.DefinitionFeature.Domain.Supporting.Builders
         {
             try
             {
-                _response.Source = _html.DocumentNode
+                _response.Language = _html.DocumentNode
                     .SelectSingleNode("//*[@id='src-selector']//span[@class='lang-name']")
                     .InnerHtml
                     .ToLanguage();
 
-                if (_response.Source == Language.Unknown) throw new ParsingException();
+                if (_response.Language == Language.Unknown) throw new ParsingException();
             }
             catch
             {
                 throw new ParsingException("Unable to parse source language.");
             }
 
-            try
-            {
-                _response.Target = _html.DocumentNode
-                    .SelectSingleNode("//*[@id='trg-selector']//span[@class='lang-name']")
-                    .InnerHtml
-                    .ToLanguage();
-
-                if (_response.Target == Language.Unknown) throw new ParsingException();
-            }
-            catch
-            {
-                throw new ParsingException("Unable to parse target language.");
-            }
-
             return this;
         }
 
-        public DefinitionParseBuilder WithExamples()
+        public DefinitionParseBuilder WithDefinitions()
         {
-            var sourceLanguage = _response.Source;
-            if (sourceLanguage == Language.Unknown) throw new ArgumentException($"'{_response.Source}' is not setted");
-
-            var targetLanguage = _response.Target;
-            if (targetLanguage == Language.Unknown) throw new ArgumentException($"'{_response.Target}' is not setted");
+            var sourceLanguage = _response.Language;
+            if (sourceLanguage == Language.Unknown) throw new ArgumentException($"'{_response.Language}' is not setted");
 
             try
             {
-                var sourceLayout = GetLayout(sourceLanguage);
-                var sourceSentences = _html.DocumentNode
-                    .SelectNodes($"//*[@id='examples-content']/div[@class='example']/div[@class='src {sourceLayout}']/span")
-                    .Select(n => n.InnerHtml.RemoveHtmlTags().ReplaceSpecSymbols());
+                //var sourceLayout = GetLayout(sourceLanguage);
+                //var sourceSentences = _html.DocumentNode
+                //    .SelectNodes($"//*[@id='examples-content']/div[@class='example']/div[@class='src {sourceLayout}']/span")
+                //    .Select(n => n.InnerHtml.RemoveHtmlTags().ReplaceSpecSymbols());
 
-                var targetLayout = GetLayout(targetLanguage);
-                var targetSentences = _html.DocumentNode
-                    .SelectNodes($"//*[@id='examples-content']/div[@class='example']/div[@class='trg {targetLayout}']/span[@class='text'][1]")
-                    .Select(n => n.InnerHtml.RemoveHtmlTags().ReplaceSpecSymbols());
+                //var targetLayout = GetLayout(targetLanguage);
+                //var targetSentences = _html.DocumentNode
+                //    .SelectNodes($"//*[@id='examples-content']/div[@class='example']/div[@class='trg {targetLayout}']/span[@class='text'][1]")
+                //    .Select(n => n.InnerHtml.RemoveHtmlTags().ReplaceSpecSymbols());
 
-                if (targetSentences.Count() != sourceSentences.Count())
-                    throw new ParsingException("Failed to parse an examples");
+                //if (targetSentences.Count() != sourceSentences.Count())
+                //    throw new ParsingException("Failed to parse an examples");
+                var partOfSpeeches = _html.DocumentNode.SelectNodes("//*[@class='definition-pos-block']//h2")
+                    .Select(x => x.InnerHtml.ToPartOfSpeech());
 
-                var examples = new List<Example>();
+                var definitionSentenceGroups = _html.DocumentNode.SelectNodes("//*[@class='definition-pos-block']//div[contains(@class, 'definition-example')]");
 
-                for (var i = 0; i < targetSentences.Count(); i++)
+                var defintions = new List<Defintion>();
+
+
+                foreach (var partOfSpeech in partOfSpeeches.Select((v, i) => new { Index = i, Value = v }))
                 {
-                    var sourceSentence = new Sentence(sourceLanguage, sourceSentences.ElementAt(i));
-                    var targetSentence = new Sentence(targetLanguage, targetSentences.ElementAt(i));
-                    examples.Add(new Example(sourceSentence, targetSentence));
+                    var definitionSentences = _html.DocumentNode.SelectNodes($"//div[@class='definition-pos-block']");
+
+                    foreach (var definitionSentence in definitionSentences)
+                    {
+                        //defintions.AddRange(new Defintion(sourceSentence, targetSentence));
+                    }
                 }
 
-                _response.Examples = examples;
+                _response.Definitions = defintions;
 
                 return this;
             }

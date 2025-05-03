@@ -2,6 +2,9 @@
 using ReversoAPI.Web;
 using ReversoAPI.Web.ConjugationFeature.Application.Services;
 using ReversoAPI.Web.ContextFeature.Application.Services;
+using ReversoAPI.Web.DefinitionFeature.Application;
+using ReversoAPI.Web.DefinitionFeature.Application.Interfaces;
+using ReversoAPI.Web.DefinitionFeature.Application.Services;
 using ReversoAPI.Web.GrammarCheckFeature.Application.Services;
 using ReversoAPI.Web.PronunciationFeature.Application.Services;
 using ReversoAPI.Web.SynonymsFeature.Application.Services;
@@ -25,6 +28,7 @@ namespace ReversoAPI
             Spelling = new SpellingClient(new SpellingService(apiConnector, config.Logger));
             Translation = new TranslationClient(new TranslationService(apiConnector, config.Logger));
             Pronunciation = new PronunciationClient(new PronunciationService(apiConnector));
+            Definition = new DefinitionClient(new DefinitionService(apiConnector, config.DefinitionParser));
         }
 
         public ReversoClient() : this(new ReversoClientConfig().CreateDefault())
@@ -37,6 +41,7 @@ namespace ReversoAPI
         public ITranslationClient Translation { get; }
         public IPronunciationClient Pronunciation { get; }
         public IConjugationClient Conjugation { get; }
+        public IDefinitionClient Definition { get; }
 
         public void Dispose()
         {

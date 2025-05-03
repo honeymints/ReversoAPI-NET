@@ -19,9 +19,9 @@ namespace ReversoAPI.Web.DefinitionFeature.Application.Services
             _parser = parser;
         }
 
-        public async Task<DefinitionData> GetAsync(string text, Language source, Language target, CancellationToken cancellationToken = default)
+        public async Task<DefinitionData> GetAsync(string text, Language language, CancellationToken cancellationToken = default)
         {
-            var url = CombineUrl(text, source, target);
+            var url = CombineUrl(text, language);
 
             using var response = await _apiConnector
                 .GetAsync(url, cancellationToken)
@@ -32,12 +32,11 @@ namespace ReversoAPI.Web.DefinitionFeature.Application.Services
             return _parser.Invoke(response.Content);
         }
 
-        private Uri CombineUrl(string text, Language source, Language target)
+        private Uri CombineUrl(string text, Language language)
         {
-            var sourceLanguage = source.ToString().ToLower();
-            var targetLanguage = target.ToString().ToLower();
+            var sourceLanguage = language.ToString().ToLower();
 
-            return new Uri(DefitinitionURL + $"{sourceLanguage}-definition/{text}#translation={targetLanguage}");
+            return new Uri(DefitinitionURL + $"{sourceLanguage}-definition/{text}");
         }
     }
 }

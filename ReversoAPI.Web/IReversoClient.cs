@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReversoAPI.Web.DefinitionFeature.Application.Interfaces;
+using System;
 
 namespace ReversoAPI
 {
@@ -10,5 +11,6 @@ namespace ReversoAPI
         ITranslationClient Translation { get; }
         IPronunciationClient Pronunciation { get; }
         IConjugationClient Conjugation { get; }
+        IDefinitionClient Definition { get; }
     }
 }

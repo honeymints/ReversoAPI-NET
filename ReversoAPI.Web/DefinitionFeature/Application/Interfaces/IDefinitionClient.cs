@@ -6,6 +6,6 @@ namespace ReversoAPI.Web.DefinitionFeature.Application.Interfaces
 
     public interface IDefinitionClient
     {
-        Task<DefinitionData> GetAsync(string text, Language source, Language target, CancellationToken cancellationToken = default);
+        Task<DefinitionData> GetAsync(string text, Language language, CancellationToken cancellationToken = default);
     }
 }
